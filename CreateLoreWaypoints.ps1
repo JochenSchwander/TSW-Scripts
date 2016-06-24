@@ -14,11 +14,11 @@ function Get-InstanceCounter($content) {
 }
 
 function Escape-XMLTags($text) {
+    $text = $text -replace "&", "&amp;"
     $text = $text -replace "`"", "&quot;"
     $text = $text -replace "'", "&apos;"
     $text = $text -replace "<", "&lt;"
     $text = $text -replace ">", "&gt;"
-    $text = $text -replace "&", "&amp;"
     return $text
 }
 
@@ -205,7 +205,7 @@ $global:manufactory = Get-WaypointFileContent $manufactoryFileName
 $global:manufactoryBreached = Get-WaypointFileContent $manufactoryBreachedFileName
 
 # lore category, lore number, zone, x, y, comment
-$lores = (Select-String -Pattern "(.+?),([\d\s]+?),(.+?),([\d\s]+),([\d\s]+),?(.*)" -InputObject $loreFileContent -AllMatches).matches
+$lores = (Select-String -Pattern "(.+?),([\d\s]+?),(.+?),`"?([\d\s]+),([\d\s]+)`"?,?(.*)" -InputObject $loreFileContent -AllMatches).matches
 ForEach($lore in $lores) {
     Create-Waypoint $lore.groups[3].value.Trim() ($lore.groups[1].value.Trim() + " " + $lore.groups[2].value.Trim()) $lore.groups[6].value.Trim() $lore.groups[4].value.Trim() $lore.groups[5].value.Trim()
 }
@@ -237,5 +237,7 @@ Write-WaypointFile $agarthaDefiledFileName $global:agarthaDefiled
 Write-WaypointFile $manufactoryFileName $global:manufactory
 Write-WaypointFile $manufactoryBreachedFileName $global:manufactoryBreached
 
-$failedLines = $loreFileContent -replace ".+?,[\d\s]+?,.+?,[\d\s]+,[\d\s]+,?.*\n?", ""
-Write-Host "Could not parse the following lines:`r`n$failedLines"
+$failedLines = $loreFileContent -replace ".+?,[\d\s]+?,.+?,`"?[\d\s]+,[\d\s]+`"?,?.*\n?", ""
+if (-not(($failedLines -replace "`r`n", "") -eq "")) {
+    Write-Host "Could not parse the following lines:`r`n$failedLines"
+}
