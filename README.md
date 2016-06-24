@@ -1,2 +1,2 @@
 # TSW-Scripts
-Some PowerShell scripts for [The Secret World](http://www.thesecretworld.com/ "The Secret World | Funcom").
+Some PowerShell 4.0 scripts for [The Secret World](http://www.thesecretworld.com/ "The Secret World | Funcom").
