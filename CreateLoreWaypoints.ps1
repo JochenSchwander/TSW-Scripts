@@ -27,6 +27,7 @@ function Write-Waypoint($content, $title, $tooltip, $x, $y) {
     $title = Escape-XMLTags $title
     $tooltip = Escape-XMLTags $tooltip
     $waypoint = "    <Waypoint type=`"custom`" instance=`"$instanceCounter`" name=`"$title`" tooltip_title=`"$title`" tooltip_text=`"$tooltip`" position=`"Point($x,$y)`" distributed_value=`"ShowCustomWaypoints`" />`r`n</Root>"
+    $global:waypointCounter = $global:waypointCounter + 1
     return $content -replace "</Root>", $waypoint
 }
 
@@ -148,6 +149,9 @@ if(-not(Test-Path $path)) {
     return
 }
 
+# waypoint counter
+$global:waypointCounter = 0
+
 # Waypoint file names
 $londonFileName = $path + "PF1000.xml"
 $newYorkFileName = $path + "PF1100.xml"
@@ -236,6 +240,8 @@ Write-WaypointFile $corpseIslandFileName $global:corpseIsland
 Write-WaypointFile $agarthaDefiledFileName $global:agarthaDefiled
 Write-WaypointFile $manufactoryFileName $global:manufactory
 Write-WaypointFile $manufactoryBreachedFileName $global:manufactoryBreached
+
+Write-Host "Successfully created $global:waypointCounter waypoints."
 
 $failedLines = $loreFileContent -replace ".+?,[\d\s]+?,.+?,`"?[\d\s]+,[\d\s]+`"?,?.*\n?", ""
 if (-not(($failedLines -replace "`r`n", "") -eq "")) {
